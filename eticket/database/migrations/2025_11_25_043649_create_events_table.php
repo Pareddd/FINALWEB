@@ -8,17 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     */
-   public function up(): void
-   {
-    Schema::create('events', function (Blueprint $table) {
+        */
+    public function up(): void
+    {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->text('deskripsi');
-            $table->dateTime('tanggal');
-            $table->string('lokasi');
-            $table->string('kategori'); 
+            $table->text('deskripsi');      
+            $table->dateTime('tanggal');    
+            $table->string('lokasi');      
+            $table->string('kategori');     
             $table->string('image')->nullable();
             $table->timestamps();
         });

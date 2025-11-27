@@ -1,11 +1,14 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Ticket;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BookingController extends Controller {
+class BookingController extends Controller
+{
     public function store(Request $request, Ticket $ticket) {
         $request->validate(['quantity' => 'required|integer|min:1']);
 
@@ -14,7 +17,7 @@ class BookingController extends Controller {
         }
 
         DB::transaction(function () use ($request, $ticket) {
-            $ticket->decrement('kuota', $request->quantity);
+            $ticket->decrement('quota', $request->quantity);
             Booking::create([
                 'user_id' => auth()->id(),
                 'ticket_id' => $ticket->id,
@@ -23,6 +26,6 @@ class BookingController extends Controller {
             ]);
         });
 
-        return back()->with('success', 'Tiket berhasil dibeli!');
+        return back()->with('success', 'Tiket berhasil dipesan!');
     }
 }

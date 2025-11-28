@@ -2,51 +2,49 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
+        <h2 class="text-2xl font-bold text-white mb-6 text-center font-display">Buat Akun Baru</h2>
+
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <label for="name" class="block font-medium text-sm text-gray-300">Nama Lengkap</label>
+            <input id="name" class="block mt-1 w-full bg-slate-900 border-slate-600 text-white rounded-md shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
-        <!-- Email Address -->
         <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <label for="email" class="block font-medium text-sm text-gray-300">Email</label>
+            <input id="email" class="block mt-1 w-full bg-slate-900 border-slate-600 text-white rounded-md shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <label for="role" class="block font-medium text-sm text-gray-300">Daftar Sebagai</label>
+            <select id="role" name="role" class="block mt-1 w-full bg-slate-900 border-slate-600 text-white rounded-md shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500">
+                <option value="user">Pengunjung (Beli Tiket)</option>
+                <option value="organizer">Event Organizer (Buat Event)</option>
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+        </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
+        <div class="mt-4">
+            <label for="password" class="block font-medium text-sm text-gray-300">Password</label>
+            <input id="password" class="block mt-1 w-full bg-slate-900 border-slate-600 text-white rounded-md shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500" type="password" name="password" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Confirm Password -->
         <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
+            <label for="password_confirmation" class="block font-medium text-sm text-gray-300">Konfirmasi Password</label>
+            <input id="password_confirmation" class="block mt-1 w-full bg-slate-900 border-slate-600 text-white rounded-md shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500" type="password" name="password_confirmation" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+        <div class="flex items-center justify-between mt-6">
+            <a class="underline text-sm text-gray-400 hover:text-white" href="{{ route('login') }}">
+                {{ __('Sudah punya akun?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <button type="submit" class="ms-4 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded shadow-lg transition">
                 {{ __('Register') }}
-            </x-primary-button>
+            </button>
         </div>
     </form>
 </x-guest-layout>

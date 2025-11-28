@@ -33,17 +33,30 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:user,organizer'], 
         ]);
+        
+        $statusAwal = 'berhasil'; 
+        
+        if ($request->role === 'organizer') {
+            $statusAwal = 'pending';
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'organizer_status' => $statusAwal, 
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($user->role === 'organizer') {
+            return redirect()->route('organizer.pending');
+        }
 
         return redirect(route('dashboard', absolute: false));
     }

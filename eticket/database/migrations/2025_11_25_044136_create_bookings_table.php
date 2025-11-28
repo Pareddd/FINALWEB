@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
@@ -16,14 +13,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
-            $table->enum('status', ['lunas', 'batal'])->default('lunas');
+            $table->enum('status', ['pending', 'lunas', 'batal'])->default('pending');
+            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('bookings');

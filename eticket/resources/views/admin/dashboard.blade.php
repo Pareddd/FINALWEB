@@ -8,7 +8,7 @@
             
             <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-8 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
                 <div class="relative z-10">
-                    <h3 class="text-gray-400 uppercase tracking-widest text-xs mb-2 font-bold">Total Pendapatan Tiket</h3>
+                    <h3 class="text-white uppercase tracking-widest text-xs mb-2 font-bold">Total Pendapatan Tiket</h3>
                     <p class="text-5xl font-display font-black text-white">
                         IDR <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{{ number_format($totalRevenue, 0, ',', '.') }}</span>
                     </p>
@@ -26,7 +26,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-center bg-slate-900/50 p-4 rounded-lg mb-3 border border-white/5 hover:border-yellow-500/30 transition">
                         <div class="mb-3 md:mb-0">
                             <p class="text-white font-bold text-lg">{{ $org->name }}</p>
-                            <p class="text-sm text-gray-400">{{ $org->email }}</p>
+                            <p class="text-sm text-gray-200">{{ $org->email }}</p>
                             <p class="text-xs text-yellow-500 mt-1">Status: Pending Approval</p>
                         </div>
                         <div class="flex gap-3">
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-700 rounded-lg">
+                    <div class="text-center py-8 text-white border border-dashed border-gray-600 rounded-lg">
                         Tidak ada permintaan baru.
                     </div>
                 @endforelse
@@ -58,8 +58,8 @@
                 </h3>
                 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-gray-300">
-                        <thead class="text-xs uppercase bg-slate-700 text-gray-400">
+                    <table class="w-full text-left text-white">
+                        <thead class="text-xs uppercase bg-slate-700 text-white">
                             <tr>
                                 <th class="px-4 py-3 rounded-tl-lg">Nama</th>
                                 <th class="px-4 py-3">Email</th>
@@ -72,10 +72,10 @@
                             @foreach($allUsers as $user)
                             <tr class="hover:bg-slate-700/30 transition">
                                 <td class="px-4 py-3 font-bold text-white">{{ $user->name }}</td>
-                                <td class="px-4 py-3">{{ $user->email }}</td>
+                                <td class="px-4 py-3 text-gray-200">{{ $user->email }}</td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 rounded text-xs font-bold 
-                                        {{ $user->role == 'organizer' ? 'bg-purple-900 text-purple-300' : 'bg-blue-900 text-blue-300' }}">
+                                        {{ $user->role == 'organizer' ? 'bg-purple-900 text-purple-200' : 'bg-blue-900 text-blue-200' }}">
                                         {{ strtoupper($user->role) }}
                                     </span>
                                 </td>
@@ -86,7 +86,7 @@
                                             {{ strtoupper($user->organizer_status) }}
                                         </span>
                                     @else
-                                        <span class="text-gray-500">-</span>
+                                        <span class="text-gray-400">-</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">

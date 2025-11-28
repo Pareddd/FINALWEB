@@ -13,19 +13,37 @@ class BookingController extends Controller
         $request->validate(['quantity' => 'required|integer|min:1']);
 
         if ($ticket->kuota < $request->quantity) {
-            return back()->with('error', 'Stok habis!');
+            return back()->with('error', 'Stok tiket habis!');
         }
 
         DB::transaction(function () use ($request, $ticket) {
-            $ticket->decrement('quota', $request->quantity);
+            
+            $ticket->decrement('kuota', $request->quantity);
+            
             Booking::create([
                 'user_id' => auth()->id(),
                 'ticket_id' => $ticket->id,
                 'quantity' => $request->quantity,
-                'status' => 'lunas'
+                'status' => 'lunas' 
             ]);
         });
 
         return back()->with('success', 'Tiket berhasil dipesan!');
+    }
+
+    public function cancel(Booking $booking) {
+        if($booking->user_id != auth()->id()) abort(403);
+
+        if($booking->status !== 'lunas') {
+            return back()->with('error', 'Tiket sudah dibatalkan sebelumnya.');
+        }
+
+        DB::transaction(function () use ($booking) {
+            $booking->ticket->increment('kuota', $booking->quantity);
+            
+            $booking->update(['status' => 'batal']); 
+        });
+
+        return back()->with('success', 'Pesanan dibatalkan. Kuota tiket dikembalikan.');
     }
 }

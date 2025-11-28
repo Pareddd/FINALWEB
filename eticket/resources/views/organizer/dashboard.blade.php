@@ -15,14 +15,15 @@
             
             @if(session('success'))
                 <div class="bg-green-600/20 border border-green-500 text-green-400 px-4 py-3 rounded relative mb-6">
-                    <strong class="font-bold">Sukses!</strong> {{ session('success') }}
+                    <strong class="font-bold">Berhasil!</strong> {{ session('success') }}
                 </div>
             @endif
 
             <div class="bg-slate-800 overflow-hidden shadow-sm sm:rounded-lg border border-white/10 p-6">
+                
                 <h3 class="text-xl font-bold text-white mb-6">Daftar Event Saya</h3>
 
-                @if(isset($events) && $events->count() > 0)
+                @if($events->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-gray-300">
                             <thead class="text-xs uppercase bg-slate-700 text-gray-400">
@@ -42,17 +43,35 @@
                                     </td>
                                     <td class="px-6 py-4 font-bold text-white">{{ $event->name }}</td>
                                     <td class="px-6 py-4 text-sm">
-                                        {{ \Carbon\Carbon::parse($event->date_time)->format('d M Y, H:i') }}
+                                        {{ \Carbon\Carbon::parse($event->tanggal)->format('d M Y, H:i') }}
+                                        <br>
+                                        <span class="text-xs text-gray-500">{{ $event->lokasi }}</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         @foreach($event->tickets as $ticket)
                                             <span class="block text-xs bg-fuchsia-900/50 text-fuchsia-300 px-2 py-1 rounded mb-1 w-fit">
-                                                {{ $ticket->name }}: {{ $ticket->quota }}
+                                                {{ $ticket->name }}: {{ $ticket->kuota }} slot
                                             </span>
                                         @endforeach
                                     </td>
                                     <td class="px-6 py-4">
-                                        <a href="{{ route('events.show', $event) }}" class="text-blue-400 hover:text-blue-300 text-sm underline">Lihat</a>
+                                        <div class="flex items-center gap-3">
+                                            <a href="{{ route('events.show', $event) }}" class="text-cyan-400 hover:text-cyan-300 text-sm font-bold underline">
+                                                Lihat
+                                            </a>
+                                            
+                                            <a href="{{ route('events.edit', $event) }}" class="text-yellow-400 hover:text-yellow-300 text-sm font-bold underline">
+                                                Edit
+                                            </a>
+
+                                            <form action="{{ route('events.destroy', $event) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus event ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-400 text-sm font-bold underline">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach

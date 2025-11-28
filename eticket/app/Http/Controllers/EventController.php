@@ -6,15 +6,21 @@ use App\Models\Event;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    // ... (Fungsi organizerDashboard, create, store, edit TETAP SAMA seperti sebelumnya) ...
+    // ... (Pastikan Anda tetap memiliki fungsi store yang sudah benar dari jawaban sebelumnya) ...
+
     public function organizerDashboard() {
         $events = Event::where('user_id', auth()->id())->with('tickets')->latest()->get();
         return view('organizer.dashboard', compact('events'));
     }
 
-    public function create() { return view('events.create'); }
+    public function create() {
+        return view('events.create');
+    }
 
     public function store(Request $request) {
         $request->validate([
@@ -24,9 +30,7 @@ class EventController extends Controller
             'lokasi' => 'required',
             'kategori' => 'required',
             'image' => 'required|file|image|max:10240',
-            'ticket_name' => 'required',
-            'ticket_harga' => 'required|numeric',
-            'ticket_kuota' => 'required|integer',
+            'tickets' => 'required|array',
         ]);
 
         $imagePath = $request->file('image')->store('events', 'public');
@@ -41,72 +45,97 @@ class EventController extends Controller
             'image' => $imagePath
         ]);
 
-        Ticket::create([
-            'event_id' => $event->id,
-            'name' => $request->ticket_name,
-            'harga' => $request->ticket_harga,
-            'kuota' => $request->ticket_kuota,
-        ]);
+        foreach ($request->tickets as $t) {
+            Ticket::create([
+                'event_id' => $event->id,
+                'name' => $t['name'],
+                'harga' => $t['harga'],
+                'kuota' => $t['kuota'],
+                'deskripsi' => $t['deskripsi'] ?? null,
+            ]);
+        }
 
         return redirect()->route('organizer.dashboard')->with('success', 'Event Berhasil Disimpan!');
     }
 
     public function edit(Event $event) {
-        if($event->user_id != auth()->id()) abort(403);
+        if (Auth::user()->role !== 'admin' && $event->user_id != auth()->id()) abort(403);
         return view('events.edit', compact('event'));
     }
 
+    // --- FOKUS PERBAIKAN: FUNGSI UPDATE ---
     public function update(Request $request, Event $event) {
-        if($event->user_id != auth()->id()) abort(403);
-        
+        // 1. Cek Hak Akses
+        if (Auth::user()->role !== 'admin' && $event->user_id != auth()->id()) abort(403);
+
+        // 2. Validasi
         $request->validate([
             'name' => 'required',
             'deskripsi' => 'required',
             'tanggal' => 'required',
             'lokasi' => 'required',
             'kategori' => 'required',
+            'tickets' => 'required|array', // Validasi array tiket
         ]);
 
-        if ($request->hasFile('image')) {
-            if ($event->image) Storage::disk('public')->delete($event->image);
-            $event->image = $request->file('image')->store('events', 'public');
-        }
-
-        $event->update([
+        // 3. Update Data Event Utama
+        $dataEvent = [
             'name' => $request->name,
             'deskripsi' => $request->deskripsi,
             'tanggal' => $request->tanggal,
             'lokasi' => $request->lokasi,
             'kategori' => $request->kategori,
-            'image' => $event->image 
-        ]);
+        ];
 
+        // Cek jika ganti gambar
+        if ($request->hasFile('image')) {
+            if ($event->image) Storage::disk('public')->delete($event->image);
+            $dataEvent['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $event->update($dataEvent);
+
+        // 4. Update Tiket (Looping)
+        foreach ($request->tickets as $t) {
+            // Jika data punya ID, berarti ini tiket lama -> UPDATE
+            if (isset($t['id'])) {
+                $ticket = Ticket::find($t['id']);
+                if ($ticket && $ticket->event_id == $event->id) {
+                    $ticket->update([
+                        'name' => $t['name'],
+                        'harga' => $t['harga'],       // Pastikan 'harga'
+                        'kuota' => $t['kuota'],       // Pastikan 'kuota'
+                        'deskripsi' => $t['deskripsi'] ?? null,
+                    ]);
+                }
+            } 
+            // Jika tidak punya ID, berarti tiket baru ditambahkan saat edit -> CREATE
+            else {
+                Ticket::create([
+                    'event_id' => $event->id,
+                    'name' => $t['name'],
+                    'harga' => $t['harga'],
+                    'kuota' => $t['kuota'],
+                    'deskripsi' => $t['deskripsi'] ?? null,
+                ]);
+            }
+        }
+
+        if (Auth::user()->role === 'admin') return redirect()->route('admin.dashboard')->with('success', 'Event Updated!');
         return redirect()->route('organizer.dashboard')->with('success', 'Event Updated!');
     }
 
     public function destroy(Event $event) {
-        if($event->user_id != auth()->id()) abort(403);
+        if ($event->user_id != auth()->id()) abort(403);
         if ($event->image) Storage::disk('public')->delete($event->image);
         $event->delete();
-        return redirect()->route('organizer.dashboard')->with('success', 'Event Dihapus!');
+        if (Auth::user()->role === 'admin') return redirect()->route('admin.dashboard')->with('success', 'Deleted!');
+        return redirect()->route('organizer.dashboard')->with('success', 'Deleted!');
     }
 
-    public function storeTicket(Request $request, Event $event) {
-        if($event->user_id != auth()->id()) abort(403);
-
-        $request->validate([
-            'new_ticket_name' => 'required',
-            'new_ticket_harga' => 'required|numeric',
-            'new_ticket_kuota' => 'required|integer',
-        ]);
-
-        Ticket::create([
-            'event_id' => $event->id,
-            'name' => $request->new_ticket_name,
-            'harga' => $request->new_ticket_harga,
-            'kuota' => $request->new_ticket_kuota,
-        ]);
-
-        return back()->with('success', 'Tiket baru ditambahkan!');
+    public function manageBookings(Event $event) {
+        if (auth()->user()->role !== 'admin' && $event->user_id !== auth()->id()) abort(403);
+        $bookings = \App\Models\Booking::whereIn('ticket_id', $event->tickets->pluck('id'))->with(['user', 'ticket'])->latest()->get();
+        return view('events.bookings', compact('event', 'bookings'));
     }
 }

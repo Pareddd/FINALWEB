@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name'); 
             $table->decimal('harga', 10, 2);
             $table->integer('kuota');
+            $table->string('deskripsi')->nullable();
             $table->timestamps();
         });
     }

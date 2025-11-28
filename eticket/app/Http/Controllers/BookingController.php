@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -17,14 +18,13 @@ class BookingController extends Controller
         }
 
         DB::transaction(function () use ($request, $ticket) {
-       
-            $ticket->decrement('kuota', $request->quantity);
             
+            $ticket->decrement('kuota', $request->quantity);
             Booking::create([
                 'user_id' => auth()->id(),
                 'ticket_id' => $ticket->id,
                 'quantity' => $request->quantity,
-                'status' => 'pending' 
+                'status' => 'pending'
             ]);
         });
 
@@ -38,6 +38,7 @@ class BookingController extends Controller
         }
 
         DB::transaction(function () use ($booking) {
+           
             $booking->ticket->increment('kuota', $booking->quantity);
             $booking->update(['status' => 'batal']);
         });
@@ -47,18 +48,17 @@ class BookingController extends Controller
 
     public function showTicket(Booking $booking) {
         if ($booking->user_id != auth()->id()) abort(403);
-
         if ($booking->status != 'lunas') {
-            return redirect()->route('dashboard')->with('error', 'Tiket belum disetujui atau dibatalkan.');
+            return redirect()->route('dashboard')->with('error', 'Tiket belum lunas.');
         }
-
         return view('bookings.ticket', compact('booking'));
     }
-
     public function updateStatus(Request $request, Booking $booking) {
-        $user = auth()->user();
-        if ($user->role !== 'admin' && $booking->ticket->event->user_id !== $user->id) {
-            abort(403);
+        $user = Auth::user();
+        $isOwner = $booking->ticket->event->user_id === $user->id;
+        
+        if (!$isOwner) {
+            abort(403, 'Hanya Organizer pemilik event yang berhak menyetujui/menolak pesanan ini.');
         }
 
         $request->validate(['status' => 'required|in:lunas,batal']);
@@ -68,7 +68,7 @@ class BookingController extends Controller
             if ($request->status == 'batal' && $booking->status != 'batal') {
                 $booking->ticket->increment('kuota', $booking->quantity);
             }
-            
+
             if ($request->status == 'lunas' && $booking->status == 'batal') {
                 if ($booking->ticket->kuota < $booking->quantity) {
                     throw new \Exception('Stok tiket tidak cukup.');

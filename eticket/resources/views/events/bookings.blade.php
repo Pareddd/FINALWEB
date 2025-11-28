@@ -16,6 +16,9 @@
             @if(session('success'))
                 <div class="bg-green-600/20 border border-green-500 text-green-400 px-4 py-3 rounded mb-6">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+                <div class="bg-red-600/20 border border-red-500 text-red-400 px-4 py-3 rounded mb-6">{{ session('error') }}</div>
+            @endif
 
             <div class="bg-slate-800 overflow-hidden shadow-xl sm:rounded-lg border border-white/10 p-6">
                 <div class="flex justify-between items-center mb-6">
@@ -63,29 +66,33 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <div class="flex justify-center gap-2">
-                                            
-                                            @if($booking->status == 'pending')
-                                                <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST">
-                                                    @csrf @method('PATCH')
-                                                    <input type="hidden" name="status" value="lunas">
-                                                    <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
-                                                        ✓ TERIMA
-                                                    </button>
-                                                </form>
-                                            @endif
+                                        @if(Auth::id() == $event->user_id)
+                                            <div class="flex justify-center gap-2">
+                                                @if($booking->status == 'pending')
+                                                    <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST">
+                                                        @csrf @method('PATCH')
+                                                        <input type="hidden" name="status" value="lunas">
+                                                        <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
+                                                            ✓ TERIMA
+                                                        </button>
+                                                    </form>
+                                                @endif
 
-                                            @if($booking->status != 'batal')
-                                                <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST" onsubmit="return confirm('Tolak/Batalkan pesanan ini?');">
-                                                    @csrf @method('PATCH')
-                                                    <input type="hidden" name="status" value="batal">
-                                                    <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
-                                                        ✕ TOLAK
-                                                    </button>
-                                                </form>
-                                            @endif
-
-                                        </div>
+                                                @if($booking->status != 'batal')
+                                                    <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST" onsubmit="return confirm('Tolak/Batalkan pesanan ini?');">
+                                                        @csrf @method('PATCH')
+                                                        <input type="hidden" name="status" value="batal">
+                                                        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
+                                                            ✕ TOLAK
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-500 bg-slate-900 border border-slate-600 px-3 py-1.5 rounded cursor-not-allowed font-mono">
+                                                VIEW ONLY
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

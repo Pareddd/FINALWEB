@@ -9,13 +9,15 @@ class Ticket extends Model
     protected $fillable = [
         'event_id', 
         'name', 
-        'harga', 
-        'kuota'
+        'harga',      
+        'kuota',      
+        'deskripsi'   
     ];
 
     public function event() {
         return $this->belongsTo(Event::class);
     }
+
     public function bookings() {
         return $this->hasMany(Booking::class);
     }

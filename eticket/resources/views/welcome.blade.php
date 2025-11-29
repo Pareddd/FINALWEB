@@ -16,9 +16,11 @@
             background-color: #0f172a; /* Slate 900 */
             color: #ffffff;
             font-family: 'Raleway', sans-serif;
+            margin: 0;
         }
-        .font-display {
+        h1, h2, .font-display {
             font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
         }
         .neon-text {
             text-shadow: 0 0 5px #fff, 0 0 10px #d946ef, 0 0 20px #d946ef;
@@ -36,26 +38,18 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                         </svg>
                     </div>
-                    <a href="{{ route('home') }}" class="font-display font-bold text-2xl tracking-widest text-white hover:text-gray-200 transition">
-                        SOUND<span class="text-fuchsia-500">STAGE</span>
-                    </a>
+                    <span class="font-display font-bold text-2xl tracking-widest text-white">SOUND<span class="text-fuchsia-500">STAGE</span></span>
                 </div>
 
                 <div class="hidden md:flex items-center space-x-6">
                     @if (Route::has('login'))
                         @auth
                             @if(Auth::user()->role === 'admin')
-                                <a href="{{ route('admin.dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide border border-fuchsia-500/50 px-4 py-2 rounded hover:bg-fuchsia-900/50">
-                                    ADMIN PANEL
-                                </a>
+                                <a href="{{ route('admin.dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide">ADMIN PANEL</a>
                             @elseif(Auth::user()->role === 'organizer')
-                                <a href="{{ route('organizer.dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide border border-fuchsia-500/50 px-4 py-2 rounded hover:bg-fuchsia-900/50">
-                                    ORGANIZER STUDIO
-                                </a>
+                                <a href="{{ route('organizer.dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide">STUDIO</a>
                             @else
-                                <a href="{{ route('dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide">
-                                    MY TICKETS
-                                </a>
+                                <a href="{{ route('dashboard') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide">TIKET SAYA</a>
                             @endif
                         @else
                             <a href="{{ route('login') }}" class="text-gray-300 hover:text-white transition font-bold tracking-wide text-sm">LOGIN</a>
@@ -70,7 +64,7 @@
             </div>
         </div>
     </nav>
-    
+
     <div class="relative h-screen flex items-center justify-center">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop" alt="Concert" class="w-full h-full object-cover opacity-60">
@@ -120,9 +114,9 @@
             @if($events->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($events as $event)
-                    <div class="group relative bg-gray-800 rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 shadow-2xl border border-white/5">
+                    <div class="group relative bg-gray-800 rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 shadow-2xl border border-white/5 flex flex-col h-full">
                         
-                        <div class="relative h-64 overflow-hidden">
+                        <div class="relative h-64 overflow-hidden shrink-0">
                             <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10 opacity-80"></div>
                             @if($event->image)
                                 <img src="{{ asset('storage/' . $event->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -131,31 +125,39 @@
                             @endif
 
                             <div class="absolute top-4 right-4 z-20 bg-black/80 border border-fuchsia-500 text-center px-3 py-2 rounded">
-                                <span class="block text-2xl font-bold font-display text-white">{{ \Carbon\Carbon::parse($event->date_time)->format('d') }}</span>
-                                <span class="block text-xs text-fuchsia-400 uppercase">{{ \Carbon\Carbon::parse($event->date_time)->format('M') }}</span>
+                                <span class="block text-2xl font-bold font-display text-white">{{ \Carbon\Carbon::parse($event->tanggal)->format('d') }}</span>
+                                <span class="block text-xs text-fuchsia-400 uppercase">{{ \Carbon\Carbon::parse($event->tanggal)->format('M') }}</span>
                             </div>
                         </div>
 
-                        <div class="p-6 relative z-20 -mt-12">
-                            <span class="text-xs font-bold tracking-widest text-blue-400 uppercase mb-2 block">{{ $event->category }}</span>
+                        <div class="p-6 relative z-20 flex flex-col flex-grow -mt-4">
+                            <span class="text-xs font-bold tracking-widest text-blue-400 uppercase mb-2 block">{{ $event->kategori }}</span>
                             
                             <h3 class="text-2xl font-bold text-white mb-2 font-display leading-tight group-hover:text-fuchsia-400 transition">
                                 {{ $event->name }}
                             </h3>
                             
                             <div class="flex items-center text-gray-400 text-sm mb-6">
-                                📍 {{ $event->location }}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-fuchsia-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $event->lokasi }}
                             </div>
 
-                            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                            <div class="mt-auto flex items-center justify-between border-t border-white/10 pt-4">
                                 <div>
                                     <span class="text-xs text-gray-500 block uppercase">Mulai Dari</span>
+                                    
                                     @if($event->tickets->count() > 0)
-                                        <span class="text-lg font-bold text-white">IDR {{ number_format($event->tickets->min('price')/1000, 0) }}K</span>
+                                        <span class="text-lg font-bold text-white">
+                                            IDR {{ number_format($event->tickets->min('harga'), 0, ',', '.') }}
+                                        </span>
                                     @else
-                                        <span class="text-lg font-bold text-white">TBA</span>
+                                        <span class="text-lg font-bold text-white">GRATIS / TBD</span>
                                     @endif
                                 </div>
+                                
                                 <a href="{{ route('events.show', $event) }}" class="bg-white text-black hover:bg-fuchsia-500 hover:text-white px-6 py-2 rounded-full font-bold text-sm transition-colors duration-300">
                                     TIKET
                                 </a>
@@ -170,7 +172,7 @@
                     <p class="text-gray-400">Panggung sedang disiapkan. Cek lagi nanti!</p>
                 </div>
             @endif
-            </div>
+        </div>
     </div>
 
     <footer class="bg-black border-t border-white/10 pt-12 pb-8">

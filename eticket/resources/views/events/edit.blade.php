@@ -32,7 +32,7 @@
                             <div class="grid grid-cols-1 gap-6">
                                 <div>
                                     <label class="block text-sm text-gray-400 mb-1">Nama Event</label>
-                                    <input type="text" name="name" class="w-full bg-slate-900 border-slate-600 rounded-lg text-white" value="{{ old('name', $event->name) }}" required>
+                                    <input type="text" name="name" class="w-full bg-slate-900 border-slate-600 rounded-lg text-white focus:border-fuchsia-500" value="{{ old('name', $event->name) }}" required>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
@@ -60,7 +60,7 @@
                                     <label class="block text-sm text-gray-400 mb-1">Ganti Poster (Opsional)</label>
                                     <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-slate-600">
                                         @if($event->image)
-                                            <img src="{{ asset('storage/' . $event->image) }}" class="w-16 h-16 object-cover rounded">
+                                            <img src="{{ asset('storage/' . $event->image) }}" class="w-16 h-16 object-cover rounded border border-white/20">
                                         @endif
                                         <input type="file" name="image" class="w-full text-gray-400 text-sm">
                                     </div>
@@ -80,14 +80,13 @@
                                 @foreach($event->tickets as $index => $ticket)
                                 <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 relative">
                                     <input type="hidden" name="tickets[{{$index}}][id]" value="{{ $ticket->id }}">
-                                    
                                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                                         <div class="md:col-span-3">
                                             <label class="block text-xs text-gray-400 mb-1">Nama Tiket</label>
                                             <input type="text" name="tickets[{{$index}}][name]" value="{{ $ticket->name }}" class="w-full bg-slate-800 border-slate-600 rounded text-white text-sm" required>
                                         </div>
                                         <div class="md:col-span-2">
-                                            <label class="block text-xs text-gray-400 mb-1">Harga (Rp)</label>
+                                            <label class="block text-xs text-gray-400 mb-1">Harga</label>
                                             <input type="number" name="tickets[{{$index}}][harga]" value="{{ $ticket->harga }}" class="w-full bg-slate-800 border-slate-600 rounded text-white text-sm" required>
                                         </div>
                                         <div class="md:col-span-2">
@@ -95,23 +94,19 @@
                                             <input type="number" name="tickets[{{$index}}][kuota]" value="{{ $ticket->kuota }}" class="w-full bg-slate-800 border-slate-600 rounded text-white text-sm" required>
                                         </div>
                                         <div class="md:col-span-5">
-                                            <label class="block text-xs text-gray-400 mb-1">Deskripsi / Benefit</label>
+                                            <label class="block text-xs text-gray-400 mb-1">Deskripsi</label>
                                             <input type="text" name="tickets[{{$index}}][deskripsi]" value="{{ $ticket->deskripsi }}" class="w-full bg-slate-800 border-slate-600 rounded text-white text-sm">
                                         </div>
                                     </div>
-                                    <p class="text-[10px] text-gray-500 mt-2 text-right">ID Tiket: {{ $ticket->id }}</p>
                                 </div>
                                 @endforeach
                             </div>
                         </div>
 
                         <div class="flex justify-end gap-4 border-t border-white/10 pt-6">
-                            
-                            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('organizer.dashboard') }}" 
-                               class="px-6 py-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition">
+                            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('organizer.dashboard') }}" class="px-6 py-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition">
                                 BATAL
                             </a>
-
                             <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-bold hover:from-blue-500 hover:to-cyan-500 shadow-lg transition transform hover:scale-105">
                                 UPDATE EVENT
                             </button>
@@ -129,10 +124,12 @@
         function addTicketRow() {
             const container = document.getElementById('ticket-container');
             const newRow = document.createElement('div');
-            newRow.classList.add('bg-slate-900/50', 'p-4', 'rounded-lg', 'border', 'border-green-500/30', 'relative', 'mt-4');
+            
+            // PERBAIKAN: Menambahkan class 'ticket-item'
+            newRow.classList.add('ticket-item', 'bg-slate-900/50', 'p-4', 'rounded-lg', 'border', 'border-green-500/30', 'relative', 'mt-4');
             
             newRow.innerHTML = `
-                <div class="absolute -top-3 left-3 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded">BARU</div>
+                <div class="absolute -top-3 left-3 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded shadow">BARU</div>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                     <div class="md:col-span-3">
                         <label class="block text-xs text-gray-400 mb-1">Nama Tiket</label>
@@ -151,7 +148,7 @@
                         <input type="text" name="tickets[${ticketCount}][deskripsi]" placeholder="Benefit..." class="w-full bg-slate-800 border-slate-600 rounded text-white text-sm">
                     </div>
                     <div class="md:col-span-1 flex items-end h-full pb-1">
-                        <button type="button" onclick="this.closest('.bg-slate-900\\/50').remove()" class="text-red-500 hover:text-red-400 font-bold text-xl">✕</button>
+                        <button type="button" onclick="this.closest('.ticket-item').remove()" class="text-red-500 hover:text-red-400 font-bold text-xl" title="Hapus Baris">✕</button>
                     </div>
                 </div>
             `;

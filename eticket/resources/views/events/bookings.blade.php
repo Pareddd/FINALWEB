@@ -67,7 +67,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if(Auth::id() == $event->user_id)
+                                            
                                             <div class="flex justify-center gap-2">
+                                                
                                                 @if($booking->status == 'pending')
                                                     <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST">
                                                         @csrf @method('PATCH')
@@ -76,21 +78,25 @@
                                                             ✓ TERIMA
                                                         </button>
                                                     </form>
-                                                @endif
 
-                                                @if($booking->status != 'batal')
-                                                    <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST" onsubmit="return confirm('Tolak/Batalkan pesanan ini?');">
+                                                    <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST" onsubmit="return confirm('Tolak pesanan ini?');">
                                                         @csrf @method('PATCH')
                                                         <input type="hidden" name="status" value="batal">
                                                         <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
                                                             ✕ TOLAK
                                                         </button>
                                                     </form>
+                                                @elseif($booking->status == 'lunas')
+                                                    <span class="text-green-500 text-xs font-bold italic">Disetujui</span>
+                                                @else
+                                                    <span class="text-red-500 text-xs font-bold italic">Ditolak/Batal</span>
                                                 @endif
+
                                             </div>
+
                                         @else
-                                            <span class="text-xs text-gray-500 bg-slate-900 border border-slate-600 px-3 py-1.5 rounded cursor-not-allowed font-mono">
-                                                VIEW ONLY
+                                            <span class="text-xs text-gray-500 bg-slate-900 border border-slate-600 px-2 py-1 rounded cursor-not-allowed">
+                                                View Only
                                             </span>
                                         @endif
                                     </td>

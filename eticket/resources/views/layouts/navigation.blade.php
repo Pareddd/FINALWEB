@@ -9,7 +9,7 @@
                         </svg>
                     </div>
                     <a href="{{ route('home') }}">
-                        <span class="font-display font-bold text-xl text-white tracking-widest">SOUND<span class="text-fuchsia-500">STAGE</span></span>
+                        <span class="font-display font-bold text-xl text-white tracking-widest">SOUND<span class="text-fuchsia-500">TIX</span></span>
                     </a>
                 </div>
 

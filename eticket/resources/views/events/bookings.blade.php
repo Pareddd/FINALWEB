@@ -7,21 +7,21 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
+            <div class="mb-6 px-4 sm:px-0">
                 <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('organizer.dashboard') }}" class="text-gray-400 hover:text-white transition">
                     &larr; Kembali ke Dashboard
                 </a>
             </div>
 
             @if(session('success'))
-                <div class="bg-green-600/20 border border-green-500 text-green-400 px-4 py-3 rounded mb-6">{{ session('success') }}</div>
+                <div class="mx-4 sm:mx-0 bg-green-600/20 border border-green-500 text-green-400 px-4 py-3 rounded mb-6">{{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="bg-red-600/20 border border-red-500 text-red-400 px-4 py-3 rounded mb-6">{{ session('error') }}</div>
+                <div class="mx-4 sm:mx-0 bg-red-600/20 border border-red-500 text-red-400 px-4 py-3 rounded mb-6">{{ session('error') }}</div>
             @endif
 
-            <div class="bg-slate-800 overflow-hidden shadow-xl sm:rounded-lg border border-white/10 p-6">
-                <div class="flex justify-between items-center mb-6">
+            <div class="bg-slate-800 overflow-hidden shadow-xl sm:rounded-lg border border-white/10 p-4 sm:p-6 mx-2 sm:mx-0">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <h3 class="text-xl font-bold text-white">Daftar Pemesan Masuk</h3>
                     <div class="flex gap-2">
                         <div class="bg-yellow-500/20 border border-yellow-500 px-3 py-1 rounded text-xs text-yellow-500">
@@ -35,28 +35,28 @@
 
                 @if($bookings->count() > 0)
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-white">
+                        <table class="w-full text-left text-white min-w-[800px]">
                             <thead class="text-xs uppercase bg-slate-700 text-gray-300">
                                 <tr>
-                                    <th class="px-6 py-3">ID</th>
-                                    <th class="px-6 py-3">Pemesan</th>
-                                    <th class="px-6 py-3">Tiket</th>
-                                    <th class="px-6 py-3">Jml</th>
-                                    <th class="px-6 py-3">Status</th>
-                                    <th class="px-6 py-3 text-center">Aksi</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">ID</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Pemesan</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Tiket</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Jml</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Status</th>
+                                    <th class="px-4 py-3 text-center whitespace-nowrap">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-700">
                                 @foreach($bookings as $booking)
                                 <tr class="hover:bg-slate-700/50 transition">
-                                    <td class="px-6 py-4 font-mono text-xs text-gray-400">#{{ $booking->id }}</td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-4 py-3 font-mono text-xs text-gray-400">#{{ $booking->id }}</td>
+                                    <td class="px-4 py-3">
                                         <p class="font-bold">{{ $booking->user->name }}</p>
                                         <p class="text-xs text-gray-400">{{ $booking->user->email }}</p>
                                     </td>
-                                    <td class="px-6 py-4 text-fuchsia-300">{{ $booking->ticket->name }}</td>
-                                    <td class="px-6 py-4">{{ $booking->quantity }}</td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-4 py-3 text-fuchsia-300">{{ $booking->ticket->name }}</td>
+                                    <td class="px-4 py-3">{{ $booking->quantity }}</td>
+                                    <td class="px-4 py-3">
                                         @if($booking->status == 'pending')
                                             <span class="px-2 py-1 rounded text-xs font-bold bg-yellow-500/20 text-yellow-500 border border-yellow-500/50">PENDING</span>
                                         @elseif($booking->status == 'lunas')
@@ -65,37 +65,31 @@
                                             <span class="px-2 py-1 rounded text-xs font-bold bg-red-500/20 text-red-500 border border-red-500/50">BATAL</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-4 py-3 text-center">
                                         @if(Auth::id() == $event->user_id)
-                                            
                                             <div class="flex justify-center gap-2">
-                                                
                                                 @if($booking->status == 'pending')
                                                     <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST">
                                                         @csrf @method('PATCH')
                                                         <input type="hidden" name="status" value="lunas">
-                                                        <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
+                                                        <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg whitespace-nowrap">
                                                             ✓ TERIMA
                                                         </button>
                                                     </form>
+                                                @endif
 
+                                                @if($booking->status != 'batal')
                                                     <form action="{{ route('bookings.updateStatus', $booking) }}" method="POST" onsubmit="return confirm('Tolak pesanan ini?');">
                                                         @csrf @method('PATCH')
                                                         <input type="hidden" name="status" value="batal">
-                                                        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transition transform hover:scale-105">
+                                                        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold shadow-lg whitespace-nowrap">
                                                             ✕ TOLAK
                                                         </button>
                                                     </form>
-                                                @elseif($booking->status == 'lunas')
-                                                    <span class="text-green-500 text-xs font-bold italic">Disetujui</span>
-                                                @else
-                                                    <span class="text-red-500 text-xs font-bold italic">Ditolak/Batal</span>
                                                 @endif
-
                                             </div>
-
                                         @else
-                                            <span class="text-xs text-gray-500 bg-slate-900 border border-slate-600 px-2 py-1 rounded cursor-not-allowed">
+                                            <span class="text-xs text-gray-500 bg-slate-900 border border-slate-600 px-2 py-1 rounded cursor-not-allowed whitespace-nowrap">
                                                 View Only
                                             </span>
                                         @endif

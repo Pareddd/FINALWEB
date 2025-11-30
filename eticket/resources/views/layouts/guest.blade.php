@@ -21,7 +21,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                         </svg>
                     </div>
-                    <span class="font-[Orbitron] font-bold text-3xl tracking-widest text-white">SOUND<span class="text-fuchsia-500">STAGE</span></span>
+                    <span class="font-[Orbitron] font-bold text-3xl tracking-widest text-white">SOUND<span class="text-fuchsia-500">TIX</span></span>
                 </a>
             </div>
 

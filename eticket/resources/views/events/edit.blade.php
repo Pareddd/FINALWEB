@@ -38,7 +38,7 @@
                                     <div>
                                         <label class="block text-sm text-gray-400 mb-1">Kategori</label>
                                         <select name="kategori" class="w-full bg-slate-900 border-slate-600 rounded-lg text-white">
-                                            @foreach(['Musik Pop', 'Rock Metal', 'Jazz', 'Indie', 'EDM'] as $kat)
+                                            @foreach(['Musik Pop', 'Rock Metal', 'Jazz', 'Indie', 'EDM','Indie', 'Dj', 'Dangdut'] as $kat)
                                                 <option value="{{ $kat }}" {{ $event->kategori == $kat ? 'selected' : '' }}>{{ $kat }}</option>
                                             @endforeach
                                         </select>

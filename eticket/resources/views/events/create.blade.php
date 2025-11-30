@@ -33,7 +33,7 @@
                                     <div>
                                         <label class="block text-sm font-bold mb-2 text-gray-400">Kategori</label>
                                         <select name="kategori" class="w-full bg-slate-900 border-slate-600 rounded-lg text-white">
-                                            <option>Musik Pop</option><option>Rock Metal</option><option>Jazz</option>
+                                            <option>Musik Pop</option><option>Rock Metal</option><option>Jazz</option><option>Dangdut</option><option>Dj</option><option>Indie</option><option>EDM</option>
                                         </select>
                                     </div>
                                     <div>
